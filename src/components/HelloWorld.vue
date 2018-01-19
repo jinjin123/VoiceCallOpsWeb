@@ -52,7 +52,7 @@ export default {
       tabid: 0,
       tabs: [
         {
-          label: "Dashboard",
+          label: "仪表盘",
           baseIcon: dashboard,
           colorIcon: dashboardcolor,
           link: "./Dashboard"

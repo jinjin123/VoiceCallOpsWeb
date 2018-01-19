@@ -40,10 +40,10 @@
       </div>
     </card>
     <divider>告警级别日趋势</divider>
-    <line-chart class="linechart" :chart-data="linedata"></line-chart>
+    <line-chart class="linechart" :chart-data="linedata" :options="warning"></line-chart>
     <div v-for="(item,idx) in flowData">
       <divider>{{item.export_line_name}}</divider>
-      <line-chart class="linechart" :chart-data="flowLineData[idx]"></line-chart>
+      <line-chart class="linechart" :chart-data="flowLineData[idx]" :options="series[idx]"></line-chart>
     </div>
     <divider>租户服务器数量TOP10</divider>
     <pie-chart class="piechart" :chart-data="tenantTopData"></pie-chart>
@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import sqcyc from "../assets/上汽乘用车.png";
 import sharecar from "../assets/88共享出行.png";
 import maxus from "../assets/上汽大通.png";
 import saicbigdata from "../assets/上汽集团大数据.png";
@@ -101,6 +102,7 @@ export default {
   data() {
     return {
       keyLogo: [
+        sqcyc,
         banmacar,
         maxus,
         saicbigdata,
@@ -109,6 +111,58 @@ export default {
         sharecar,
         gcsrental
       ],
+      series: [
+        {
+          scales: {
+            yAxes:[{
+              ticks: {
+                max: 400,
+                min:0
+              }
+            }]
+          }
+        },
+        {
+          scales: {
+            yAxes:[{
+              ticks: {
+                max: 300,
+                min:0
+              }
+            }]
+          }
+        },
+        {
+          scales: {
+            yAxes:[{
+              ticks: {
+                max: 300,
+                min:0
+              }
+            }]
+          }
+        },
+        {
+          scales: {
+            yAxes:[{
+              ticks: {
+                max: 100,
+                min:0
+              }
+            }]
+          }
+        }
+      ],
+      warning:{
+        scales: {
+          yAxes:[{
+            ticks: {
+              max: 5000,
+              min:0
+            }
+          }]
+        }
+      },
       flowData: [],
       flowLineData: [],
       tenantTopData: null,
@@ -213,7 +267,7 @@ export default {
               borderWidth:2,
               pointRadius:0
             };
-          })
+          }),
         };
       });
     },
