@@ -45,12 +45,56 @@
       <divider>{{item.export_line_name}}</divider>
       <line-chart class="linechart" :chart-data="flowLineData[idx]" :options="series[idx]"></line-chart>
     </div>
+    <div v-for="(item,idx) in flowDtData">
+      <divider>{{item.export_line_name}}</divider>
+      <line-chart class="linechart" :chart-data="flowDtLineData[idx]" :options="datong[idx]" ></line-chart>
+    </div>
+    <div v-for="(item,idx) in flowDtngxData">
+      <divider>{{item.export_line_name}}</divider>
+      <line-chart class="linechart" :chart-data="flowDtngxLineData[idx]" :options="dtngxact[idx]" ></line-chart>
+    </div>
+    <div v-for="(item,idx) in flowBmData">
+      <divider>{{item.export_line_name}}</divider>
+      <line-chart class="linechart" :chart-data="flowBmLineData[idx]"  ></line-chart>
+    </div>
+    <div v-for="(item,idx) in flowBmtgoneData">
+      <divider>{{item.export_line_name}}</divider>
+      <line-chart class="linechart" :chart-data="flowBmtgoneLineData[idx]"  ></line-chart>
+    </div>
+    <div v-for="(item,idx) in flowBmtgtwoData">
+      <divider>{{item.export_line_name}}</divider>
+      <line-chart class="linechart" :chart-data="flowBmtgtwoLineData[idx]"  ></line-chart>
+    </div>
+    <div v-for="(item,idx) in flowBmtgthreeData">
+      <divider>{{item.export_line_name}}</divider>
+      <line-chart class="linechart" :chart-data="flowBmtgthreeLineData[idx]"  ></line-chart>
+    </div>
+    <div v-for="(item,idx) in flowBmtgfourData">
+      <divider>{{item.export_line_name}}</divider>
+      <line-chart class="linechart" :chart-data="flowBmtgfourLineData[idx]"  ></line-chart>
+    </div>
+    <div v-for="(item,idx) in flowBmngxsesData">
+      <divider>{{item.export_line_name}}</divider>
+      <line-chart class="linechart" :chart-data="flowBmngxsesLineData[idx]"  ></line-chart>
+    </div>
     <divider>租户服务器数量TOP10</divider>
     <pie-chart class="piechart" :chart-data="tenantTopData"></pie-chart>
     <divider>网络设备数量分布区域预览</divider>
     <pie-chart class="piechart" :chart-data="netdevicesData"></pie-chart>
     <divider>服务器数量分布区域预览</divider>
     <pie-chart class="piechart" :chart-data="serverData"></pie-chart>
+    <divider>大通nginx当前session数</divider>
+    <pie-chart class="piechart" :chart-data="dtngxsesData"></pie-chart>
+    <divider>大通49.10cpu负载</divider>
+    <pie-chart class="piechart" :chart-data="dttencuData"></pie-chart>
+    <divider>大通49.10使用内存情况</divider>
+    <pie-chart class="piechart" :chart-data="dttenmemData"></pie-chart>
+    <divider>大通49.11cpu负载</divider>
+    <pie-chart class="piechart" :chart-data="dtelvcuData"></pie-chart>
+    <divider>大通49.11使用内存情况</divider>
+    <pie-chart class="piechart" :chart-data="dtelvmemData"></pie-chart>
+    <divider>斑马nginx当前总session数</divider>
+    <pie-chart class="piechart" :chart-data="bmngxsesData"></pie-chart>
     <divider>重点租户容量</divider>
     <div class="tenantCard" v-for="(rd,ri) in keyTenant" :key="ri">
       <div class="logoArea">
@@ -111,6 +155,30 @@ export default {
         sharecar,
         gcsrental
       ],
+      dtngxact: [
+        {
+          scales: {
+            yAxes:[{
+              ticks: {
+                max: 10000,
+                min:0
+              }
+            }]
+          }
+        },
+      ],
+      datong: [
+        {
+          scales: {
+            yAxes:[{
+              ticks: {
+                max: 300,
+                min:0
+              }
+            }]
+          }
+        },
+      ],
       series: [
         {
           scales: {
@@ -165,8 +233,30 @@ export default {
       },
       flowData: [],
       flowLineData: [],
+      flowDtData: [],
+      flowDtLineData:[],
+      flowDtngxData: [],
+      flowDtngxLineData:[],
+      flowBmData: [],
+      flowBmLineData:[],
+      flowBmtgoneData:[],
+      flowBmtgoneLineData:[],
+      flowBmtgtwoData:[],
+      flowBmtgtwoLineData:[],
+      flowBmtgthreeData:[],
+      flowBmtgthreeLineData:[],
+      flowBmtgfourData:[],
+      flowBmtgfourLineData:[],
+      flowBmngxsesData:[],
+      flowBmngxsesLineData:[],
       tenantTopData: null,
       netdevicesData: null,
+      dtngxsesData: null,
+      dttencuData: null,
+      dttenmemData: null,
+      dtelvcuData: null,
+      dtelvmemData: null,
+      bmngxsesData: null,
       serverData: null,
       linedata: null,
       deviceInfo: {},
@@ -174,6 +264,14 @@ export default {
       warningDate: {
         x_time: [],
         series: []
+      },
+      flowDtData: {
+        x_time:[],
+        series:[]
+      },
+      flowDtngxData: {
+        x_time:[],
+        series:[]
       }
     };
   },
@@ -250,12 +348,294 @@ export default {
       .catch(function(error) {
         console.log(error);
       });
+      // datong idc line
+      this.$axios
+        .get(process.env.BASE_URL + "/dashboard/getDtLineInfo/")
+        .then(function(res) {
+          self.flowDtData = res.data.data.data;
+          self.fillDtFlowData();
+        })
+        .catch(function(error) {
+          console.log(error);
+        });
+        // datong ngx act num line
+        this.$axios
+          .get(process.env.BASE_URL + "/dashboard/getDtngxact/")
+          .then(function(res) {
+            self.flowDtngxData = res.data.data.data;
+            self.fillDtngxFlowData();
+          })
+          .catch(function(error) {
+            console.log(error);
+        });
+        // nginx session  num
+        this.$axios
+          .get(process.env.BASE_URL + "/dashboard/DtngxsesPie")
+          .then(function(res) {
+            self.DtngxsesPieDate = res.data.data.resultList;
+            self.fillngxsesPie();
+          })
+          .catch(function(error) {
+            console.log(error);
+          });
+          // nginx session  num
+          this.$axios
+            .get(process.env.BASE_URL + "/dashboard/DtcputenPie")
+            .then(function(res) {
+              self.DtcutenPieDate = res.data.data.resultList;
+              self.filldtcutenPie();
+            })
+            .catch(function(error) {
+              console.log(error);
+          });
+          this.$axios
+            .get(process.env.BASE_URL + "/dashboard/DtmemtenPie")
+            .then(function(res) {
+              self.DtmemtenPieDate = res.data.data.resultList;
+              self.filldtmemtenPie();
+            })
+            .catch(function(error) {
+              console.log(error);
+          });
+          this.$axios
+            .get(process.env.BASE_URL + "/dashboard/DtcpuelvPie")
+            .then(function(res) {
+              self.DtcuelvPieDate = res.data.data.resultList;
+              self.filldtcuelvPie();
+            })
+            .catch(function(error) {
+              console.log(error);
+          });
+          this.$axios
+            .get(process.env.BASE_URL + "/dashboard/DtmemelvPie")
+            .then(function(res) {
+              self.DtmemelvPieDate = res.data.data.resultList;
+              self.filldtmemelvPie();
+            })
+            .catch(function(error) {
+              console.log(error);
+          });
+          this.$axios
+            .get(process.env.BASE_URL + "/dashboard/getBmlvscon/")
+            .then(function(res) {
+              self.flowBmData = res.data.data.data;
+              self.fillBmFlowData();
+            })
+            .catch(function(error) {
+              console.log(error);
+          });
+          this.$axios
+            .get(process.env.BASE_URL + "/dashboard/getBmtgonetcp/")
+            .then(function(res) {
+              self.flowBmtgoneData = res.data.data.data;
+              self.fillBmtgoneFlowData();
+            })
+            .catch(function(error) {
+              console.log(error);
+          });
+          this.$axios
+            .get(process.env.BASE_URL + "/dashboard/getBmtgtwotcp/")
+            .then(function(res) {
+              self.flowBmtgtwoData = res.data.data.data;
+              self.fillBmtgtwoFlowData();
+            })
+            .catch(function(error) {
+              console.log(error);
+          });
+          this.$axios
+            .get(process.env.BASE_URL + "/dashboard/getBmtgthreetcp/")
+            .then(function(res) {
+              self.flowBmtgthreeData = res.data.data.data;
+              self.fillBmtgthreeFlowData();
+            })
+            .catch(function(error) {
+              console.log(error);
+          });
+          this.$axios
+            .get(process.env.BASE_URL + "/dashboard/getBmtgfourtcp/")
+            .then(function(res) {
+              self.flowBmtgfourData = res.data.data.data;
+              self.fillBmtgfourFlowData();
+            })
+            .catch(function(error) {
+              console.log(error);
+          });
+          this.$axios
+            .get(process.env.BASE_URL + "/dashboard/getBmngxLine/")
+            .then(function(res) {
+              self.flowBmngxsesData = res.data.data.data;
+              self.fillBmngxsesFlowData();
+            })
+            .catch(function(error) {
+              console.log(error);
+          });
+          this.$axios
+            .get(process.env.BASE_URL + "/dashboard/getBmngxPie/")
+            .then(function(res) {
+              self.BmngxsesPieDate = res.data.data.resultList;
+              self.fillBmngxsesPie();
+            })
+            .catch(function(error) {
+              console.log(error);
+          });
   },
   methods: {
     fillFlowData() {
       let self = this;
       self.flowData.forEach(function(item, index) {
         self.flowLineData[index] = {
+          labels: item.x_time,
+          datasets: item.series.map(function(item, index) {
+            return {
+              label: `${item.name}(${item.unit})`,
+              fill: false,
+              backgroundColor: flowColor[index],
+              borderColor: flowColor[index],
+              data: item.data,
+              borderWidth:2,
+              pointRadius:0
+            };
+          }),
+        };
+      });
+    },
+    fillDtFlowData() {
+      let self = this;
+      self.flowDtData.forEach(function(item, index) {
+        self.flowDtLineData[index] = {
+          labels: item.x_time,
+          datasets: item.series.map(function(item, index) {
+            return {
+              label: `${item.name}(${item.unit})`,
+              fill: false,
+              backgroundColor: flowColor[index],
+              borderColor: flowColor[index],
+              data: item.data,
+              borderWidth:2,
+              pointRadius:0
+            };
+          }),
+        };
+      });
+    },
+    fillDtngxFlowData() {
+      let self = this;
+      self.flowDtngxData.forEach(function(item, index) {
+        self.flowDtngxLineData[index] = {
+          labels: item.x_time,
+          datasets: item.series.map(function(item, index) {
+            return {
+              label: `${item.name}(${item.unit})`,
+              fill: false,
+              backgroundColor: flowColor[index],
+              borderColor: flowColor[index],
+              data: item.data,
+              borderWidth:2,
+              pointRadius:0
+            };
+          }),
+        };
+      });
+    },
+    fillBmFlowData() {
+      let self = this;
+      self.flowBmData.forEach(function(item, index) {
+        self.flowBmLineData[index] = {
+          labels: item.x_time,
+          datasets: item.series.map(function(item, index) {
+            return {
+              label: `${item.name}(${item.unit})`,
+              fill: false,
+              backgroundColor: flowColor[index],
+              borderColor: flowColor[index],
+              data: item.data,
+              borderWidth:2,
+              pointRadius:0
+            };
+          }),
+        };
+      });
+    },
+    fillBmtgoneFlowData() {
+      let self = this;
+      self.flowBmtgoneData.forEach(function(item, index) {
+        self.flowBmtgoneLineData[index] = {
+          labels: item.x_time,
+          datasets: item.series.map(function(item, index) {
+            return {
+              label: `${item.name}(${item.unit})`,
+              fill: false,
+              backgroundColor: flowColor[index],
+              borderColor: flowColor[index],
+              data: item.data,
+              borderWidth:2,
+              pointRadius:0
+            };
+          }),
+        };
+      });
+    },
+    fillBmtgtwoFlowData() {
+      let self = this;
+      self.flowBmtgtwoData.forEach(function(item, index) {
+        self.flowBmtgtwoLineData[index] = {
+          labels: item.x_time,
+          datasets: item.series.map(function(item, index) {
+            return {
+              label: `${item.name}(${item.unit})`,
+              fill: false,
+              backgroundColor: flowColor[index],
+              borderColor: flowColor[index],
+              data: item.data,
+              borderWidth:2,
+              pointRadius:0
+            };
+          }),
+        };
+      });
+    },
+    fillBmtgthreeFlowData() {
+      let self = this;
+      self.flowBmtgthreeData.forEach(function(item, index) {
+        self.flowBmtgthreeLineData[index] = {
+          labels: item.x_time,
+          datasets: item.series.map(function(item, index) {
+            return {
+              label: `${item.name}(${item.unit})`,
+              fill: false,
+              backgroundColor: flowColor[index],
+              borderColor: flowColor[index],
+              data: item.data,
+              borderWidth:2,
+              pointRadius:0
+            };
+          }),
+        };
+      });
+    },
+    fillBmtgfourFlowData() {
+      let self = this;
+      self.flowBmtgfourData.forEach(function(item, index) {
+        self.flowBmtgfourLineData[index] = {
+          labels: item.x_time,
+          datasets: item.series.map(function(item, index) {
+            return {
+              label: `${item.name}(${item.unit})`,
+              fill: false,
+              backgroundColor: flowColor[index],
+              borderColor: flowColor[index],
+              data: item.data,
+              borderWidth:2,
+              pointRadius:0
+            };
+          }),
+        };
+      });
+    },
+    fillBmngxsesFlowData() {
+      let self = this;
+      self.flowBmngxsesData.forEach(function(item, index) {
+        self.flowBmngxsesLineData[index] = {
           labels: item.x_time,
           datasets: item.series.map(function(item, index) {
             return {
@@ -321,6 +701,114 @@ export default {
           }
         ],
         labels: self.netdevPieDate.map(function(item, index) {
+          return item.location;
+        })
+      };
+    },
+    fillngxsesPie() {
+      let self = this;
+      this.dtngxsesData = {
+        datasets: [
+          {
+            data: self.DtngxsesPieDate.map(function(item, index) {
+              return item.count;
+            }),
+            backgroundColor: self.DtngxsesPieDate.map(function(item, index) {
+              return pieColor[index];
+            })
+          }
+        ],
+        labels: self.DtngxsesPieDate.map(function(item, index) {
+          return item.location;
+        })
+      };
+    },
+    filldtcutenPie() {
+      let self = this;
+      this.dttencuData = {
+        datasets: [
+          {
+            data: self.DtcutenPieDate.map(function(item, index) {
+              return item.count;
+            }),
+            backgroundColor: self.DtcutenPieDate.map(function(item, index) {
+              return pieColor[index];
+            })
+          }
+        ],
+        labels: self.DtcutenPieDate.map(function(item, index) {
+          return item.location;
+        })
+      };
+    },
+    filldtcuelvPie() {
+      let self = this;
+      this.dtelvcuData = {
+        datasets: [
+          {
+            data: self.DtcuelvPieDate.map(function(item, index) {
+              return item.count;
+            }),
+            backgroundColor: self.DtcuelvPieDate.map(function(item, index) {
+              return pieColor[index];
+            })
+          }
+        ],
+        labels: self.DtcuelvPieDate.map(function(item, index) {
+          return item.location;
+        })
+      };
+    },
+    filldtmemtenPie() {
+      let self = this;
+      this.dttenmemData = {
+        datasets: [
+          {
+            data: self.DtmemtenPieDate.map(function(item, index) {
+              return item.count;
+            }),
+            backgroundColor: self.DtmemtenPieDate.map(function(item, index) {
+              return pieColor[index];
+            })
+          }
+        ],
+        labels: self.DtmemtenPieDate.map(function(item, index) {
+          return item.location;
+        })
+      };
+    },
+    filldtmemelvPie() {
+      let self = this;
+      this.dtelvmemData = {
+        datasets: [
+          {
+            data: self.DtmemelvPieDate.map(function(item, index) {
+              return item.count;
+            }),
+            backgroundColor: self.DtmemelvPieDate.map(function(item, index) {
+              return pieColor[index];
+            })
+          }
+        ],
+        labels: self.DtmemelvPieDate.map(function(item, index) {
+          return item.location;
+        })
+      };
+    },
+    fillBmngxsesPie() {
+      let self = this;
+      this.bmngxsesData = {
+        datasets: [
+          {
+            data: self.BmngxsesPieDate.map(function(item, index) {
+              return item.count;
+            }),
+            backgroundColor: self.BmngxsesPieDate.map(function(item, index) {
+              return pieColor[index];
+            })
+          }
+        ],
+        labels: self.BmngxsesPieDate.map(function(item, index) {
           return item.location;
         })
       };
