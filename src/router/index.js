@@ -6,11 +6,25 @@ Vue.use(Router)
 export default new Router({
   routes: [
     {
-      path: '/',
-      name: 'HelloWorld',
+      path: '/Login',
+      name: 'Login',
       component: function (resolve) {
-        require(['@/components/HelloWorld'], resolve)
+               require(['@/components/Login'], resolve)
       },
+    },
+    {
+      path: '/error',
+      name: 'error',
+      component: function (resolve) {
+               require(['@/components/error'], resolve)
+      },
+    },
+      {
+        path: '/HelloWorld',
+        name: 'HelloWorld',
+        component: function (resolve) {
+                 require(['@/components/HelloWorld'], resolve)
+        },
       children: [
         {
           path: 'Dashboard',
@@ -42,13 +56,35 @@ export default new Router({
           component: function (resolve) {
             require(['@/components/AlarmDetails'], resolve)
           }
-        }, {
-          path: 'CMDB',
-          name: 'CMDB',
+        },
+        //  {
+        //   path: 'CMDB',
+        //   name: 'CMDB',
+        //   component: function (resolve) {
+        //     require(['@/components/CMDB'], resolve)
+        //   }
+        // },
+        {
+          path: 'Imgraph',
+          name: 'Imgraph',
           component: function (resolve) {
-            require(['@/components/CMDB'], resolve)
+            require(['@/components/Imgraph'], resolve)
           }
-        }
+        },
+        {
+          path: 'pydetail',
+          name: 'pydetail',
+          component: function (resolve) {
+            require(['@/components/pyvm'], resolve)
+          }
+        },
+        {
+          path: 'PyvmDetails',
+          name: 'PyvmDetails',
+          component: function (resolve) {
+            require(['@/components/PyvmDetails'], resolve)
+          }
+        },
       ]
     },
   ]

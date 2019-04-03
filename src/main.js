@@ -3,7 +3,9 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
+import ElementUI from 'element-ui'
 import axios from 'axios'
+// import resource from './resource'
 import 'iview/dist/styles/iview.css'
 import { LoadingPlugin } from 'vux'
 import { Icon, Scroll, Spin, Page, BackTop, Modal, Select, Option, Input, Button, Table } from 'iview'
@@ -23,7 +25,7 @@ Vue.component('Button', Button)
 Vue.component('Table', Table)
 
 Vue.config.productionTip = false
-Vue.use(LoadingPlugin)
+Vue.use(ElementUI)
 const FastClick = require('fastclick')
 FastClick.attach(document.body)
 Vue.prototype.$axios = axios.create({
@@ -34,6 +36,7 @@ Vue.prototype.$axios = axios.create({
 new Vue({
   el: '#app',
   router,
+    // resource,
   template: '<App/>',
   components: { App }
 })

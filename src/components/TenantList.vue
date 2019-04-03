@@ -38,6 +38,14 @@ export default {
     };
   },
   created() {
+    var ua = window.navigator.userAgent.toLowerCase();
+    if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+      // return true;
+    } else {
+      this.$router.push({
+        path:"/error"
+    })
+  };
     var self = this;
     this.$axios
       .get(process.env.BASE_URL + "/duty/range.json")

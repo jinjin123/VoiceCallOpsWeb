@@ -143,6 +143,14 @@ export default {
     };
   },
   created() {
+    var ua = window.navigator.userAgent.toLowerCase();
+    if (ua.match(/MicroMessenger/i) == 'micromessenger') {
+      // return true;
+    } else {
+      this.$router.push({
+        path:"/error"
+    })
+  };
     var self = this;
     this.$axios
       .get(process.env.BASE_URL + "/alarm/alarmLevel")
@@ -220,7 +228,7 @@ export default {
     },
     showdetails: function(item) {
       this.$router.push({
-        path: "/AlarmDetails",
+        path: "/HelloWorld/AlarmDetails",
         query: {
           id: item
         }

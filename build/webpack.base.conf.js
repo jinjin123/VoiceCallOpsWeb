@@ -26,6 +26,7 @@ const webpackConfig = module.exports = {
     alias: {
       'vue$': 'vue/dist/vue.esm.js',
       '@': resolve('src'),
+      'jquery': path.resolve(__dirname,'../static/js/jquery.min.js')
     }
   },
   module: {
